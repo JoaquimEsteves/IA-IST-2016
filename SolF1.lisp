@@ -1,22 +1,23 @@
 
 ;;; These functions, and any other ones needed must be implemented
 
+;;; Utilizar estes includes para os testes na versao local
+;;; comentar antes de submeter
 (load "datastructures.lisp")
 (load "auxfuncs.lisp")
 
+;;; Utilizar estes includes para a versao a submeter
+; tirar o comentario antes de submeter
+;(load "datastructures.fas")
+;(load "auxfuncs.fas")
+
 (defun isObstaclep (pos track) 
-  "check if there is an obstacle at position pos of the track";se calhar tenho de usar cdr e car na pos...
-  (if(eq(aref(Track-env track) pos) nil) (return-from isObstaclep T))
-  nil
-)
+  "check if there is an obstacle at position pos of the track"
+  t)
 
 (defun isGoalp (st) 
   "check if st is a goal state"
-	(loop for e in (Track-endpositions (State-track st))
-		do (if(eq e (State-position st)) (return-from isGoalp T))
-	)
-  nil
-)
+  t)
 
 (defun nextState (st act)
   "generate the nextState after state st and action act"

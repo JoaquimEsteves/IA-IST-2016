@@ -1,13 +1,8 @@
-
-;;; These functions, and any other ones needed must be implemented
-
 ;;; Utilizar estes includes para os testes na versao local
-;;; comentar antes de submeter
 (load "datastructures.lisp")
 (load "auxfuncs.lisp")
 
-;;; Utilizar estes includes para a versao a submeter
-; tirar o comentario antes de submeter
+;;; Utilizar estes includes para a versao a submeter no mooshack
 ;(load "datastructures.fas")
 ;(load "auxfuncs.fas")
 
@@ -30,7 +25,9 @@
   nil
 )
 
-;dada duas listas devolve a  lista com a soma das duas tem de ter tamanho 2
+;Dadas duas listas como input, devolve uma lista de dois elementos.
+;O primeiro elemento da lista de a devolver corresponde a uma soma dos respectivos primeiros elementos das listas de input,
+;O segundo corresponde a uma soma dos respectivos segundos elementos das listas de input.
 (defun addList (list1 list2)
 	(list (+ (car list1)  (car list2)) (+ (car(cdr list1)) (car (cdr list2))))
 )

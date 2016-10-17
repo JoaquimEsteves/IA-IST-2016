@@ -1,4 +1,8 @@
 # IA-IST-2016
+Grupo 92:
+75860	Guilherme Jorge de Lemos Marques
+77020	Joaquim Brotas Vasconcelos Esteves
+
 O código desenvolvido pelos alunos está guardado no ficheiro SolF1.lisp
 
 [ATENÇÃO] 

@@ -75,11 +75,18 @@
 ;;; Pedir 
 (defun nextStates (st)
   "generate all possible next states"
-  ;;COMENTÁRIOS MEUS IE JOAQUIM
-  ;;Fazer lista de todas as accoes possiveis usando is obstacle
+  ;;COMENTARIOS MEUS IE JOAQUIM
+  ;;Fazer lista de todas as accoes possiveis usando is obstacle OU NAO?! DUVIDA PROF IMPORTANTE !!!!!!!!!!!!!!!!!!!!!!
   ;;fazer next state das accoes
   ;;devolver essa lista
-	(list st))
+	(let ((possible-states '() ) )
+		(loop for act in (funcall possible-actions)
+			do (push (nextState st act) possible-states)
+		)
+			
+	(list possible-states)
+))
+	
 
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim &key cutoff?)

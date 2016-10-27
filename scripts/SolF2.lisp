@@ -70,7 +70,7 @@
 
 
 
-;; Solution of phase 2
+
 
 ;;; Pedir 
 (defun nextStates (st)
@@ -79,25 +79,52 @@
   ;;Fazer lista de todas as accoes possiveis usando is obstacle OU NAO?! DUVIDA PROF IMPORTANTE !!!!!!!!!!!!!!!!!!!!!!
   ;;fazer next state das accoes
   ;;devolver essa lista
-	(let ((possible-states '() ) )
-		(loop for act in (funcall possible-actions)
+	(let ((possible-states ) )
+		(loop for act in (possible-actions)
 			do (push (nextState st act) possible-states)
 		)
 			
-	(list possible-states)
+	possible-states
 ))
 	
 
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim &key cutoff?)
-	;;Nao faco a minima ideia do que e o key e o cuttoff
+	;;Nao faco a minima ideia do que e o key e o cuttoff! DUVIDA AO PROFFF!
   "limited depth first search
      st - initial state
      problem - problem information
      lim - depth limit"
-	(list (make-node :state (problem-initial-state problem))) )
-				      
+	;;(if (eq cutoff NIL)
+	;;	(setf cutoff ())
+	;;)
+	;(print (auxfuncdepth  (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem) 0 lim '()))
+	 (auxfuncdepth  (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem) 0 lim '())
 
+ )
+ 
+ (setf *p1* (make-problem :initial-state (initial-state *track*)
+						 :fn-isGoal #'isGoalp
+						 :fn-nextstates #'nextStates))
+(limdepthfirstsearch *p1* 6)
+						 
+(defun auxfuncdepth (initial-state isGoal nextStates depth limit cutoff)
+	(cond 
+		;Is this a goal state state acording to the function we got from the problem?
+		((funcall isGoal initial-state) (return-from auxfuncdepth cutoff))
+		;see if weve reached the limit!
+		((>= depth limit) (return-from auxfuncdepth cutoff))
+		(t (loop for n in (funcall nextStates initial-state) do
+			(progn 
+				(push initial-state cutoff)
+				(incf depth)
+				(auxfuncdepth n isGoal nextStates depth limit cutoff)
+
+			)
+			)
+		)
+	)
+)		 
 ;iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
 ;;parece ser facil de fazer fam
@@ -107,3 +134,11 @@
      lim - limit of depth iterations"
 	(list (make-node :state (problem-initial-state problem))) )
 
+	
+	
+;;ENCONTRADO NA NET!!!!
+(defun iterative-deepening-search (problem)
+  "Do a series of depth-limited searches, increasing depth each time. [p 79]"
+  (for depth = 0 to lim do
+       (let ((solution (depth-limited-search problem depth)))
+	 (unless (eq solution :cut-off) (RETURN solution)))))

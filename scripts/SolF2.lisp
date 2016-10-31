@@ -2,8 +2,8 @@
 (load "auxfuncs.lisp")
 
 ;;; Utilizar estes includes para a versao a submeter no mooshack
-; (load "datastructures.fas")
-; (load "auxfuncs.fas")
+ ; (load "datastructures.fas")
+ ; (load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -98,8 +98,16 @@
 	(setf cutoff? nil) ;just in case...
 	(let ((solution '()))
 		(setf solution(cons  (problem-initial-state problem) solution))
-		(print(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?))
-		(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?)
+		; (print(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?))
+		; (let (()) (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?)
+		; )
+		(let ((check (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?)))
+			(when check (cond 
+				((not check) cutoff?)
+				(t check)
+			)
+			)
+		)
 	)
  )
 
@@ -163,15 +171,6 @@
 			)
 		))
 ))
-	
-
-(defun states-to-list (stts)
-  (loop for st in stts
-	  collect
-	  (list	  (state-pos st)
-		  (state-vel st)
-		  (state-action st)
-		  (state-cost st))))
 		  
 ;iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
@@ -180,10 +179,8 @@
      st - initial state
      problem - problem information
      lim - limit of depth iterations"
-	 (let ((solution '()))
-		(setf solution(cons  (problem-initial-state problem) solution))
-	(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim  solution nil)
-	)
-	)
-
-	
+	(loop for x from 0 to lim
+		do(let ((solution  ( limdepthfirstsearch problem x)))
+		(unless (eq solution nil) (RETURN solution)))
+	)	 
+)

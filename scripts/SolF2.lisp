@@ -90,16 +90,16 @@
 	
 
 ;;; limdepthfirstsearch 
-(defun limdepthfirstsearch (problem lim &key cutoff?)
+(defun limdepthfirstsearch (problem lim &key cutoff?) ;;NO NEED FOR CUTOFF HURRRRRRRRRRAY
 	;;Nao faco a minima ideia do que e o key e o cuttoff! DUVIDA AO PROFFF!
   "limited depth first search
      st - initial state
      problem - problem information
      lim - depth limit"
-	;;(if (eq cutoff NIL)
-	;;	(setf cutoff ())
-	;;)
-	(setf cutoff? 0)
+	(if (not cutoff?)
+		(setf cutoff? 0)
+	)
+	; (setf cutoff? 0)
 	(let ((newNode (make-node :parent nil :state  (problem-initial-state problem) )))
 	;(print (auxfuncdepth  newNode (problem-initial-state problem) ( problem-fn-isGoal problem) (problem-fn-nextStates problem) 0 lim '() ))
 	
@@ -108,7 +108,7 @@
  )
  )
 
-
+;;SE NÃO EXPANDI UM NÓ PORQUE CHEGUEI AO LIMITE ISSO É QUE É UM CUTOFF!!!!!!!!!!!!!!!!!!!!!!!
 
 		  (defun dfs (parents state depth goalp nextStates )
   ;"DFS with limited depth and test for cycles."
@@ -167,7 +167,7 @@
 		)
 	)
 )
-	
+	':CORTE
 (defun auxfuncdepth (parentnode initial-state isGoal nextStates queue depth limit )
 	
 	(cond 

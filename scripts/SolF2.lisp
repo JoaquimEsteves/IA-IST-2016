@@ -99,47 +99,23 @@
 	;;(if (eq cutoff NIL)
 	;;	(setf cutoff ())
 	;;)
-	(setf cutoff? 0)
-	(let ((newNode (make-node :parent nil :state  (problem-initial-state problem) )))
-	;(print (auxfuncdepth  newNode (problem-initial-state problem) ( problem-fn-isGoal problem) (problem-fn-nextStates problem) 0 lim '() ))
-	
-	 ;(list (auxfuncdepth  newNode (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem) queue 0 lim ))
-	(print (auxdfs '() '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim) )
- )
+	(print (auxdfs '() '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim cutoff? ) )
  )
 
-
-
-		  (defun dfs (parents state depth goalp nextStates )
-  ;"DFS with limited depth and test for cycles."
-  (cond 
-	((funcall goalp state)(list state))
-        ((> depth 0)
-         (let ((childs (funcall nextStates state)))
-             (loop for c in childs
-               for solution = (when (not (member c parents :test
-                                                 #'equalp))
-                                (dfs c (1- depth)(cons state parents)))
-               do (when solution
-                    (return-from dfs (cons state solution)))
-					)
-			)
-		)
+(defun nodeToState (node)
+	(let((lst '()) (a 0))
+	(loop 
+   (setq a (+ a 1))
+	(when (node-parent node) (return lst))
+)))
+(defun teste (state stts)
+	(loop for n in stts
+		do(if  (equal (state-pos state) (state-pos n))
+			(return-from teste nil))
 	)
-)
-(defun teste (state state2)
-	(if
-	(equal  (state-pos state) (state-pos state2))
-	(return-from teste T)
-	)
-	nil
+	T
 	
 )
-
-(setf (track-startpos *track*) '(2 15))
-(setf *p1* (make-problem :initial-state (initial-state *track*)
-						 :fn-isGoal #'isGoalp
-						 :fn-nextstates #'nextStates))  
 
 (defun states-to-list (stts)
   (loop for st in stts
@@ -148,48 +124,25 @@
 		  (state-vel st)
 		  (state-action st)
 		  (state-cost st))))
-(defun auxdfs (parentnode parents state isGoal nextStates depth limit )
-	(let ((newNode (make-node :parent parentnode :state  state)))
+		  
+(defun auxdfs (parentnode parents state isGoal nextStates depth limit cutoff? )
+	(let ((newNode (make-node  :state  state)))
 	(cond 
 		;Is this a goal state state acording to the function we got from the problem?
-		((funcall isGoal state) newNode)
+		((funcall isGoal state)  newNode)
 		;see if weve reached the limit!
-		((>= depth limit) (return-from auxdfs newNode))
+		((>= depth limit) nil)
 		(t (progn(incf depth) 
 			(loop for n in (funcall nextStates state)
-					  for solution = (when (not (member n parents :test
-                                                 #'teste))
-                                (auxdfs newNode (cons state parents) n isGoal nextStates depth limit ))
-				   do (when solution
-						(return-from auxdfs (cons state solution)))
-				)
-			)
-		)
-	)
-)
-	
-(defun auxfuncdepth (parentnode initial-state isGoal nextStates queue depth limit )
-	
-	(cond 
-		;Is this a goal state state acording to the function we got from the problem?
-		((funcall isGoal initial-state) newNode)
-		;see if weve reached the limit!
-		((>= depth limit) (print 'ELLELEELEL))
-		(t (progn(incf depth) 
-			(loop for n in (funcall nextStates initial-state) do
-				(progn
-					(print  (state-pos n))
-		  (print (state-vel n))
-		  (print(state-action st))
-		  (print(state-cost st))
-					(let ((solution ( auxfuncdepth newNode n isGoal nextStates depth limit )))
-					(when solution (RETURN solution)))	
-
+					do(if (teste n parents)
+						(let ((solution (auxdfs newNode (cons state parents) n isGoal nextStates depth limit cutoff?)))
+							(when solution (RETURN solution)))	
+							
 				)
 			)
 		))
-	))
-)		 
+)))
+	 
 ;iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
 ;;parece ser facil de fazer fam

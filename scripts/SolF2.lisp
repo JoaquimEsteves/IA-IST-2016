@@ -91,23 +91,18 @@
 
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim &key cutoff?)
-	;;Nao faco a minima ideia do que e o key e o cuttoff! DUVIDA AO PROFFF!
   "limited depth first search
      st - initial state
      problem - problem information
      lim - depth limit"
-	(if (not cutoff?)
-		(setf cutoff? nil)
+	(setf cutoff? nil) ;just in case...
+	(let ((solution '()))
+		(setf solution(cons  (problem-initial-state problem) solution))
+		(print(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?))
+		(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?)
 	)
-	(auxdfs '() '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim cutoff? )
  )
 
-(defun nodeToState (node)
-	(let((lst '()) (a 0))
-	(loop 
-   (setq a (+ a 1))
-	(when (node-parent node) (return lst))
-)))
 (defun teste (state stts)
 	(loop for n in stts
 		do(if  (equal (state-pos state) (state-pos n))
@@ -115,6 +110,60 @@
 	)
 	T
 )
+		  
+; (defun auxdfs_joaquim (parentnode parents state isGoal nextStates depth limit cutoff? )
+	; (let ((newNode (make-node  :state  state)))
+		; (cond 
+			; ;Is this a goal state state acording to the function we got from the problem?
+			; ((funcall isGoal state)  (return-from auxdfs newNode))
+			;;see if weve reached the limit!
+			; ((>= depth limit) 
+				; (cond
+				;;	check if I can expand!
+					; ((if (funcall nextStates state)
+						 ; (progn
+						; (setf cutoff? ':CORTE) ;Seems like there were further states unexplored!
+					;;	  (print depth)
+						 ; )
+						; )
+					; )
+					; (t (return cutoff?))
+				; )
+			; )
+			; (t (progn
+				; (incf depth)
+				;;(print depth)
+				; (loop for n in (funcall nextStates state)
+						; do(if (teste n parents)
+							; (let ((solution (auxdfs newNode (cons state parents) n isGoal nextStates depth limit cutoff?)))
+								; (when solution (RETURN solution)))					
+					; )
+				; )
+			; ))	
+		; )
+	; )
+; )
+
+(defun auxdfs ( parents state isGoal nextStates depth limit  sol cutoff?)
+	(cond 
+		;Is this a goal state state acording to the function we got from the problem?
+		((funcall isGoal state)  (reverse sol))
+		;see if weve reached the limit!
+		((>= depth limit) (progn 
+			(setf cutoff? ':CORTE)
+			(return-from auxdfs nil)
+		))
+		(t (progn(incf depth) 
+			(loop for n in (funcall nextStates state)
+					do(if (teste n parents)
+						(let ((solution (auxdfs (cons state parents) n isGoal nextStates depth limit  (cons n sol) cutoff? )))
+							(when solution (RETURN solution)))	
+							
+				)
+			)
+		))
+))
+	
 
 (defun states-to-list (stts)
   (loop for st in stts
@@ -124,58 +173,6 @@
 		  (state-action st)
 		  (state-cost st))))
 		  
-(defun auxdfs_joaquim (parentnode parents state isGoal nextStates depth limit cutoff? )
-	(let ((newNode (make-node  :state  state)))
-		(cond 
-			;Is this a goal state state acording to the function we got from the problem?
-			((funcall isGoal state)  (return-from auxdfs newNode))
-			;see if weve reached the limit!
-			((>= depth limit) 
-				(cond
-					;check if I can expand!
-					((if (funcall nextStates state)
-						 (progn
-						(setf cutoff? ':CORTE) ;Seems like there were further states unexplored!
-						  ; (print depth)
-						 )
-						)
-					)
-					(t (return cutoff?))
-				)
-			)
-			(t (progn
-				(incf depth)
-				; (print depth)
-				(loop for n in (funcall nextStates state)
-						do(if (teste n parents)
-							(let ((solution (auxdfs newNode (cons state parents) n isGoal nextStates depth limit cutoff?)))
-								(when solution (RETURN solution)))					
-					)
-				)
-			))	
-		)
-	)
-)
-
-
-(defun auxdfs (parentnode parents state isGoal nextStates depth limit cutoff? )
-	(let ((newNode (make-node  :state  state)))
-	(cond 
-		;Is this a goal state state acording to the function we got from the problem?
-		((funcall isGoal state)  newNode)
-		;see if weve reached the limit!
-		((>= depth limit) nil)
-		(t (progn(incf depth) 
-			(loop for n in (funcall nextStates state)
-					do(if (teste n parents)
-						(let ((solution (auxdfs newNode (cons state parents) n isGoal nextStates depth limit cutoff?)))
-							(when solution (RETURN solution)))	
-							
-				)
-			)
-		))
-)))
-	 
 ;iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
 ;;parece ser facil de fazer fam
@@ -183,14 +180,10 @@
      st - initial state
      problem - problem information
      lim - limit of depth iterations"
-	 (setf lim 0)
-	(list (make-node :state (problem-initial-state problem))) )
+	 (let ((solution '()))
+		(setf solution(cons  (problem-initial-state problem) solution))
+	(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim  solution nil)
+	)
+	)
 
 	
-	
-; ;;ENCONTRADO NA NET!!!!
-; (defun iterative-deepening-search (problem)
-  ; "Do a series of depth-limited searches, increasing depth each time. [p 79]"
-  ; (for depth = 0 to lim do
-       ; (let ((solution (depth-limited-search problem depth)))
-	 ; (unless (eq solution :cut-off) (RETURN solution)))))

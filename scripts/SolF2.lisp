@@ -1,9 +1,9 @@
-;(load "datastructures.lisp")
-;(load "auxfuncs.lisp")
+(load "datastructures.lisp")
+(load "auxfuncs.lisp")
 
 ;;; Utilizar estes includes para a versao a submeter no mooshack
- (load "datastructures.fas")
-(load "auxfuncs.fas")
+ ;(load "datastructures.fas")
+; (load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -98,15 +98,15 @@
 	(setf cutoff? '())
 	(let ((solution '()))
 		(setf solution(cons  (problem-initial-state problem) solution))
-		;(print(states-to-list (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution)))
+		; (print(states-to-list (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution)))
 		(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution)
 	)
  )
 
-(defun teste (state stts)
+(defun checkIfVisited (state stts) ;CHANGE THE NAME OF THIS FUNCTION PLZ
 	(loop for n in stts
 		do(if(equal state n)
-			(return-from teste nil)))
+			(return-from checkIfVisited nil)))
 	T
 )
 		  
@@ -115,15 +115,21 @@
 		;Is this a goal state state acording to the function we got from the problem?
 		((funcall isGoal state)  (reverse sol))
 		;see if weve reached the limit!
-		((>= depth limit) nil )
-		(t (progn(incf depth) 
+		((>= depth limit) (progn 
+			(setf cutoff? ':CORTE)
+			(return-from auxdfs nil)
+		))
+		(t (progn(incf depth)
+			; (let ((check '())) 
 			(loop for n in (funcall nextStates state)
-					do(if (teste n parents)
+					do(if (checkIfVisited n parents)
 						(let ((solution (auxdfs (cons state parents) n isGoal nextStates depth limit  (cons n sol))))
-							(when solution (RETURN solution)))	
+							(when solution (if(not (eq solution ':CORTE)) (return-from auxdfs solution))))	
 							
 				)
 			)
+			(return-from auxdfs cutoff?)
+			; )
 		))
 ))
 		  
@@ -136,6 +142,6 @@
      lim - limit of depth iterations"
 	(loop for x from 0 to lim
 		do(let ((solution  ( limdepthfirstsearch problem x)))
-		(unless (eq solution nil) (RETURN solution)))
+		(unless (or (eq solution nil) (eq solution ':CORTE)) (RETURN solution)))
 	)	 
 )

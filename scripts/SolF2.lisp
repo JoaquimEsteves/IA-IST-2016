@@ -1,9 +1,9 @@
-(load "datastructures.lisp")
-(load "auxfuncs.lisp")
+;(load "datastructures.lisp")
+;(load "auxfuncs.lisp")
 
 ;;; Utilizar estes includes para a versao a submeter no mooshack
- ; (load "datastructures.fas")
- ; (load "auxfuncs.fas")
+ (load "datastructures.fas")
+(load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -95,76 +95,31 @@
      st - initial state
      problem - problem information
      lim - depth limit"
-	(setf cutoff? nil) ;just in case...
+	(setf cutoff? '())
 	(let ((solution '()))
 		(setf solution(cons  (problem-initial-state problem) solution))
-		; (print(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?))
-		; (let (()) (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?)
-		; )
-		(let ((check (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?)))
-			(when check (cond 
-				((not check) cutoff?)
-				(t check)
-			)
-			)
-		)
+		;(print(states-to-list (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution)))
+		(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution)
 	)
  )
 
 (defun teste (state stts)
 	(loop for n in stts
-		do(if  (equal (state-pos state) (state-pos n))
-			(return-from teste nil))
-	)
+		do(if(equal state n)
+			(return-from teste nil)))
 	T
 )
 		  
-; (defun auxdfs_joaquim (parentnode parents state isGoal nextStates depth limit cutoff? )
-	; (let ((newNode (make-node  :state  state)))
-		; (cond 
-			; ;Is this a goal state state acording to the function we got from the problem?
-			; ((funcall isGoal state)  (return-from auxdfs newNode))
-			;;see if weve reached the limit!
-			; ((>= depth limit) 
-				; (cond
-				;;	check if I can expand!
-					; ((if (funcall nextStates state)
-						 ; (progn
-						; (setf cutoff? ':CORTE) ;Seems like there were further states unexplored!
-					;;	  (print depth)
-						 ; )
-						; )
-					; )
-					; (t (return cutoff?))
-				; )
-			; )
-			; (t (progn
-				; (incf depth)
-				;;(print depth)
-				; (loop for n in (funcall nextStates state)
-						; do(if (teste n parents)
-							; (let ((solution (auxdfs newNode (cons state parents) n isGoal nextStates depth limit cutoff?)))
-								; (when solution (RETURN solution)))					
-					; )
-				; )
-			; ))	
-		; )
-	; )
-; )
-
-(defun auxdfs ( parents state isGoal nextStates depth limit  sol cutoff?)
+(defun auxdfs ( parents state isGoal nextStates depth limit  sol)
 	(cond 
 		;Is this a goal state state acording to the function we got from the problem?
 		((funcall isGoal state)  (reverse sol))
 		;see if weve reached the limit!
-		((>= depth limit) (progn 
-			(setf cutoff? ':CORTE)
-			(return-from auxdfs nil)
-		))
+		((>= depth limit) nil )
 		(t (progn(incf depth) 
 			(loop for n in (funcall nextStates state)
 					do(if (teste n parents)
-						(let ((solution (auxdfs (cons state parents) n isGoal nextStates depth limit  (cons n sol) cutoff? )))
+						(let ((solution (auxdfs (cons state parents) n isGoal nextStates depth limit  (cons n sol))))
 							(when solution (RETURN solution)))	
 							
 				)

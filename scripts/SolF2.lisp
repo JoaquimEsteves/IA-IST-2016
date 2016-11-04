@@ -1,9 +1,9 @@
-(load "datastructures.lisp")
-(load "auxfuncs.lisp")
+;(load "datastructures.lisp")
+;(load "auxfuncs.lisp")
 
 ;;; Utilizar estes includes para a versao a submeter no mooshack
- ;(load "datastructures.fas")
-; (load "auxfuncs.fas")
+ (load "datastructures.fas")
+ (load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -99,7 +99,7 @@
 	(let ((solution '()))
 		(setf solution(cons  (problem-initial-state problem) solution))
 		; (print(states-to-list (auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution)))
-		(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution)
+		(auxdfs '() (problem-initial-state problem) (problem-fn-isGoal problem) (problem-fn-nextStates problem)  0 lim solution cutoff?)
 	)
  )
 
@@ -110,7 +110,7 @@
 	T
 )
 		  
-(defun auxdfs ( parents state isGoal nextStates depth limit  sol)
+(defun auxdfs ( parents state isGoal nextStates depth limit  sol cutoff?)
 	(cond 
 		;Is this a goal state state acording to the function we got from the problem?
 		((funcall isGoal state)  (reverse sol))
@@ -123,7 +123,7 @@
 			; (let ((check '())) 
 			(loop for n in (funcall nextStates state)
 					do(if (checkIfVisited n parents)
-						(let ((solution (auxdfs (cons state parents) n isGoal nextStates depth limit  (cons n sol))))
+						(let ((solution (auxdfs (cons state parents) n isGoal nextStates depth limit  (cons n sol) cutoff?)))
 							(when solution (if(not (eq solution ':CORTE)) (return-from auxdfs solution))))	
 							
 				)

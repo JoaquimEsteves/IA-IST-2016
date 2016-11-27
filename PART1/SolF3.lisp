@@ -1,6 +1,10 @@
 (load "datastructures.lisp")
 (load "auxfuncs.lisp")
 
+;;; Utilizar estes includes para a versao a submeter no mooshack
+ ;(load "datastructures.fas")
+;(load "auxfuncs.fas")
+
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -145,18 +149,19 @@
 ;; Solution of phase 3
 
 (defun smallestcolumn (endpos)	
-	(setf mincolumn (nth 1 (nth 0 endpos)))
+	(let ((mincolumn (nth 1 (nth 0 endpos))))
 	(loop for n in endpos
 	  do(if (> mincolumn (nth 1 n))
 			(setf mincolumn  (nth 1 n))
 		)
 	)
 	mincolumn
+	)
 )
 
 ;; Heuristic
 (defun compute-heuristic (st)
-	(let ((track(state-track st)) (columin(smallestcolumn(track-endpositions track))))
+	(let ( (columin(smallestcolumn(track-endpositions (state-track st)))))
 		(if (getTrackContent  (state-pos st) (state-track st))
 			(return-from compute-heuristic (- columin (nth 1 (state-pos st))))
 			(return-from compute-heuristic most-positive-fixnum)
@@ -168,8 +173,7 @@
 (defun create-node(state parent gscore fscore)
 	(make-node :state state :parent parent :g gscore :f fscore)
 )
-
-
+	  
 (defun reconstruct-path(node)
 	(let ((totalpath '()) current-node)
 		(setf current-node node)
@@ -178,7 +182,6 @@
 			(setf current-node (node-parent current-node))
 			(push (node-state current-node) totalpath)
 		)
-
 	totalpath
 	)
 )
@@ -241,4 +244,4 @@
   )
   
  (defun best-search (problem)
- nil)
+  (a* problem))
